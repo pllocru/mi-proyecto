@@ -2,7 +2,6 @@
 
 <form method="POST" action="{{ route('tasks.store') }}">
     @csrf
-
     <div>
         <label for="nif_cif">NIF/CIF:</label>
         <input type="text" name="nif_cif" id="nif_cif" value="{{ old('nif_cif') }}">
@@ -19,6 +18,11 @@
         <label for="contact_phone">Teléfono:</label>
         <input type="number" name="contact_phone" id="contact_phone" value="{{ old('contact_phone') }}">
         {!! isset($errores) ? $errores->ErrorFormateado('contact_phone') : '' !!}
+    </div>
+    <div>
+        <label for="description">description:</label>
+        <input type="text" name="description" id="description" value="{{ old('description') }}">
+        {!! isset($errores) ? $errores->ErrorFormateado('description') : '' !!}
     </div>
 
     <label for="contact_email">Correo Electrónico:</label>
@@ -59,8 +63,6 @@
         <textarea name="previous_notes">{{ old('previous_notes') }}</textarea>
         {!! isset($errores) ? $errores->ErrorFormateado('state') : '' !!}
     </div>
-
-
 
 
     <button type="submit">Guardar</button>

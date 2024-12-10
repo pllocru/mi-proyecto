@@ -196,31 +196,27 @@ class TareasCtrl
     public function store()
     {
         // Obtener todas las provincias desde el modelo
-        $provincias = $this->model->getAllProvinces();
-
         // Obtener el número de página de la URL, por defecto es la página 1
         $page = $_GET['page'] ?? 1;
 
         // Verifica si se envió el formulario
         if ($_POST) {
             // Filtrar y validar los campos del formulario
-            $this->FiltraCamposPost();
+            $this->FiltraCamposPost(); // Suponiendo que esta función hace las validaciones necesarias
 
             // Si no hay errores, proceder a guardar la tarea
             if (!$this->errores->hayErrores()) {
-                // Obtener los datos del formulario
+                // Obtener los datos del formulario y hacer un saneamiento de los mismos
                 $tarea = [
                     'nif_cif' => htmlspecialchars(trim(VPost('nif_cif'))),
                     'contact_name' => htmlspecialchars(trim(VPost('contact_name'))),
                     'contact_phone' => htmlspecialchars(trim(VPost('contact_phone'))),
+                    'description' => htmlspecialchars(trim(VPost('description'))),
                     'contact_email' => htmlspecialchars(trim(VPost('contact_email'))),
                     'address' => htmlspecialchars(trim(VPost('address'))),
                     'city' => htmlspecialchars(trim(VPost('city'))),
                     'postal_code' => htmlspecialchars(trim(VPost('postal_code'))),
-                    'province_code' => htmlspecialchars(VPost('province_code')),
                     'state' => htmlspecialchars(VPost('state')),
-                    'assigned_operator' => htmlspecialchars(VPost('assigned_operator')),
-                    'execution_date' => htmlspecialchars(VPost('execution_date')),
                     'previous_notes' => htmlspecialchars(trim(VPost('previous_notes'))),
                 ];
 
@@ -235,7 +231,6 @@ class TareasCtrl
                     // Mostrar un mensaje de error si no se pudo guardar
                     return $this->renderView('Error', view('tasks.add', [
                         'errores' => ['error' => 'No se pudo crear la tarea.'],
-                        'provincias' => $provincias,
                         'page' => $page,
                     ]));
                 }
@@ -245,17 +240,16 @@ class TareasCtrl
             return $this->renderView('Errores', view('tasks.add', [
                 'tarea' => $_POST,
                 'errores' => $this->errores,
-                'provincias' => $provincias,
                 'page' => $page,
             ]));
         }
 
         // Si el formulario no se ha enviado, cargar la vista del formulario vacío
         return $this->renderView('Añadir Tarea', view('tasks.add', [
-            'provincias' => $provincias,
             'page' => $page,
         ]));
     }
+
 
 
 
@@ -357,9 +351,7 @@ class TareasCtrl
         $address = trim(VPost('address'));
         $city = trim(VPost('city'));
         $postal_code = trim(VPost('postal_code'));
-        $province_code = VPost('province_code');
         $state = VPost('state');
-        $execution_date = VPost('execution_date');
         $previous_notes = VPost('previous_notes');
 
         // Validar los datos de POST
@@ -403,12 +395,6 @@ class TareasCtrl
 
         if (!$state) {
             $this->errores->AnotaError('state', 'El estado es obligatorio.');
-        }
-
-        if ($execution_date === '') {
-            $this->errores->AnotaError('execution_date', 'La fecha de ejecución es obligatoria.');
-        } elseif (!strtotime($execution_date)) {
-            $this->errores->AnotaError('execution_date', 'La fecha de ejecución no es válida.');
         }
     }
 
